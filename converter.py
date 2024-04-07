@@ -1,3 +1,5 @@
+import random
+
 import pandas as pd
 from io import StringIO
 
@@ -16,29 +18,42 @@ df = pd.read_csv(StringIO(data), sep='\s+')
 
 # Convert 'valid' to datetime and ensure numerical fields are processed correctly
 df['valid'] = pd.to_datetime(df['valid'])
-for col in ['air_temperature', 'dew_point', 'relative_humidity', 'wind_direction', 'wind_speed', 'sea_level_pressure']:
+for col in ['air_temperature', 'dew_point', 'relative_humidity', 'wind_direction', 'wind_speed', 'sea_level_pressure', 'one_hour_precipitation']:
     df[col] = pd.to_numeric(df[col], errors='coerce')
 
 # Simplified risk estimation
 def estimate_risks(row):
     floods_risk = hurricanes_risk = wildfires_risk = 0
 
-    if pd.notnull(row['relative_humidity']) and row['relative_humidity'] > 90:
-        floods_risk = 70
-    elif pd.notnull(row['relative_humidity']) and row['relative_humidity'] > 80:
-        floods_risk = 50
-    elif pd.notnull(row['relative_humidity']) and row['relative_humidity'] > 70:
-        floods_risk = 30
+    # print(row['air_temperature'])     |
+    # print(row['dew_point'])           |^
+    # print(row['relative_humidity'])   |^
+    # print(row['wind_direction'])      |^
 
-    if pd.notnull(row['wind_speed']) and row['wind_speed'] > 20 and pd.notnull(row['sea_level_pressure']) and row['sea_level_pressure'] < 1000:
-        hurricanes_risk = 60
+    if pd.notnull(row['wind_direction']) and 90 < row['wind_direction'] < 100:
+        floods_risk = random.randint(40,50)
+    elif pd.notnull(row['wind_direction']) and 70 < row['wind_direction'] < 90:
+        floods_risk = random.randint(30, 40)
+    elif pd.notnull(row['wind_direction']) and 50 < row['wind_direction'] < 70:
+        floods_risk = random.randint(20,30)
+
+    if pd.notnull(row['wind_speed']) and row['wind_speed'] > 20 and pd.notnull(row['one_hour_precipitation']) and row['one_hour_precipitation'] < 1000:
+        hurricanes_risk = random.randint(20, 40)
     elif pd.notnull(row['wind_speed']) and row['wind_speed'] > 15:
-        hurricanes_risk = 40
+        hurricanes_risk = random.randint(0, 20)
 
-    if pd.notnull(row['air_temperature']) and row['air_temperature'] > 0 and pd.notnull(row['relative_humidity']) and row['relative_humidity'] < 30:
-        wildfires_risk = 80
-    elif pd.notnull(row['relative_humidity']) and row['relative_humidity'] < 50:
-        wildfires_risk = 60
+    # for col in ['air_temperature', 'dew_point', 'relative_humidity', 'wind_direction', 'wind_speed', 'sea_level_pressure', 'one_hour_precipitation']:
+    # print(row['air_temperature'])    #|
+    print(row['dew_point'])            #|^
+    # print(row['relative_humidity'])  #|^
+    print(row['wind_direction'])       #|^
+
+    if pd.notnull(row['dew_point']) and row['dew_point'] > 30 and pd.notnull(row['wind_direction']) and 10 < row['wind_direction'] < 30:
+        wildfires_risk = random.randint(50, 70)
+    elif pd.notnull(row['dew_point']) and row['dew_point'] > 25 and pd.notnull(row['wind_direction']) and 30 < row['wind_direction'] < 50:
+        wildfires_risk = random.randint(20, 50)
+    elif pd.notnull(row['dew_point']) and row['dew_point'] > 20 and pd.notnull(row['wind_direction']) and 50 < row['wind_direction'] < 70:
+        wildfires_risk = random.randint(0, 20)
 
     return pd.Series([floods_risk, hurricanes_risk, wildfires_risk])
 
@@ -58,9 +73,8 @@ for disaster in ['floods', 'hurricanes', 'wildfires']:
 js_object += "};\n"
 js_object += "export default bratislava;"
 
-print(js_object)
+# print(js_object)
 
 # Save the JavaScript object to a file named data.js
 with open("bratislava.js", "w") as file:
     file.write(js_object)
-
