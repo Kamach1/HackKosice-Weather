@@ -118,7 +118,7 @@ def predict(start_date, end_date, input_query):
     print(response)
 
     # Open a file in write mode
-    with open("ai_response.pdf", "w") as f:
+    with open("ai_response.txt", "w") as f:
         f.write(response)
 
 
