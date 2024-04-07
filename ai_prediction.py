@@ -1,3 +1,12 @@
+'''
+model response can be found  in ai_response.txt
+call the function predict(start_date, end_date, input query) to get prediction
+
+start/end_date format - '2021-01-01'
+query format - just ask the model to predict u smth.
+for example: "predict the teperature for the next day."
+'''
+
 # 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
 from openai import OpenAI
 import pandas as pd
@@ -126,3 +135,5 @@ def predict(start_date, end_date, input_query):
 # predict('2021-07-01', '2021-07-10', "is it possible that hurricane occure the next day?")
 # output:
 # The temperature for the next day is predicted to be around 24°C based on the pattern in the data."
+
+
